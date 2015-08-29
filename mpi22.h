@@ -417,7 +417,7 @@ int MPI_Status_c2f(MPI_Status *c_status, MPI_Fint *f_status);
 
 /* Deprecated */
 
-#if defined(MPIHOOK_INCLUDE_DEPRECATED) && MPIHOOK_INCLUDE_DEPRECATED
+#if ! defined(MPIHOOK_EXCLUDE_DEPRECATED) || ! MPIHOOK_EXCLUDE_DEPRECATED
 
 int MPI_Type_hvector(int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype);
 int MPI_Type_hindexed(int count, int *array_of_blocklengths, MPI_Aint *array_of_displacements, MPI_Datatype oldtype, MPI_Datatype *newtype);
@@ -439,4 +439,4 @@ int MPI_Errhandler_create(MPI_Handler_function *function, MPI_Errhandler *errhan
 int MPI_Errhandler_set(MPI_Comm comm, MPI_Errhandler errhandler);
 int MPI_Errhandler_get(MPI_Comm comm, MPI_Errhandler *errhandler);
 
-#endif /* MPIHOOK_INCLUDE_DEPRECATED */
+#endif /* MPIHOOK_EXCLUDE_DEPRECATED */

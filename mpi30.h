@@ -525,7 +525,7 @@ MPI_Fint MPI_Message_c2f(MPI_Message message);
 int MPI_Status_f2c(const MPI_Fint *f_status, MPI_Status *c_status);
 int MPI_Status_c2f(const MPI_Status *c_status, MPI_Fint *f_status);
 
-#if defined(MPIHOOK_INCLUDE_F08) && MPIHOOK_INCLUDE_F08
+#if ! defined(MPIHOOK_EXCLUDE_F08) || ! MPIHOOK_EXCLUDE_F08
 
 int MPI_Status_f082c(const MPI_F08_status *f08_status, MPI_Status *c_status);
 int MPI_Status_c2f08(const MPI_Status *c_status, MPI_F08_status *f08_status);
@@ -533,11 +533,11 @@ int MPI_Status_c2f08(const MPI_Status *c_status, MPI_F08_status *f08_status);
 int MPI_Status_f2f08(MPI_Fint *f_status, MPI_F08_status *f08_status);
 int MPI_Status_f082f(MPI_F08_status *f08_status, MPI_Fint *f_status);
 
-#endif /* MPIHOOK_INCLUDE_F08 */
+#endif /* MPIHOOK_EXCLUDE_F08 */
 
 /* Deprecated */
 
-#if defined(MPIHOOK_INCLUDE_DEPRECATED) && MPIHOOK_INCLUDE_DEPRECATED
+#if ! defined(MPIHOOK_EXCLUDE_DEPRECATED) || ! MPIHOOK_EXCLUDE_DEPRECATED
 
 int MPI_Keyval_create(MPI_Copy_function *copy_fn, MPI_Delete_function *delete_fn, int *keyval, void *extra_state);
 int MPI_Keyval_free(int *keyval);
@@ -546,11 +546,11 @@ int MPI_Attr_put(MPI_Comm comm, int keyval, void *attribute_val);
 int MPI_Attr_get(MPI_Comm comm, int keyval, void *attribute_val, int *flag);
 int MPI_Attr_delete(MPI_Comm comm, int keyval);
 
-#endif /* MPIHOOK_INCLUDE_DEPRECATED */
+#endif /* MPIHOOK_EXCLUDE_DEPRECATED */
 
 /* Removed */
 
-#if defined(MPIHOOK_INCLUDE_REMOVED) && MPIHOOK_INCLUDE_REMOVED
+#if ! defined(MPIHOOK_EXCLUDE_REMOVED) || ! MPIHOOK_EXCLUDE_REMOVED
 
 int MPI_Type_hvector(int count, int blocklength, MPI_Aint stride, MPI_Datatype oldtype, MPI_Datatype *newtype);
 int MPI_Type_hindexed(int count, int *array_of_blocklengths, MPI_Aint *array_of_displacements, MPI_Datatype oldtype, MPI_Datatype *newtype);
@@ -565,4 +565,4 @@ int MPI_Errhandler_create(MPI_Handler_function *function, MPI_Errhandler *errhan
 int MPI_Errhandler_set(MPI_Comm comm, MPI_Errhandler errhandler);
 int MPI_Errhandler_get(MPI_Comm comm, MPI_Errhandler *errhandler);
 
-#endif /* MPIHOOK_INCLUDE_REMOVED */
+#endif /* MPIHOOK_EXCLUDE_REMOVED */
