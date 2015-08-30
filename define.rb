@@ -5,23 +5,25 @@ require("optparse")
 mpi_init_thread_argv_is_three_star = true
 statements_before_call = ""
 statements_after_call  = ""
+statements_for_prologue = ""
+file_for_prologue = nil
 exclude_funcs = []
-prologue_file = nil
 
 opt = OptionParser.new
 opt.on("-v") {|x| mpi_init_thread_argv_is_three_star = true}
 opt.on("-V") {|x| mpi_init_thread_argv_is_three_star = false}
-opt.on("-b STATEMENTS_BEFORE_CALL") {|x| statements_before_call = x}
-opt.on("-a STATEMENTS_AFTER_CALL")  {|x| statements_after_call  = x}
+opt.on("-b STATEMENTS_BEFORE_CALL")  {|x| statements_before_call  = x}
+opt.on("-a STATEMENTS_AFTER_CALL")   {|x| statements_after_call   = x}
+opt.on("-p STATEMENTS_FOR_PROLOGUE") {|x| statements_for_prologue = x}
+opt.on("-P FILE_FOR_PROLOGUE")       {|x| file_for_prologue       = x}
 opt.on("-e EXCLUDE_FUNC1,EXCLUDE_FUNC2,...") {|x| exclude_funcs = x.split(",")}
-opt.on("-p PROLOGUE_FILE") {|x| prologue_file = x}
 opt.parse!(ARGV)
 
-if ! statements_before_call.empty?
-  statements_before_call += "\n"
+if ! statements_before_call.empty? && ! statements_before_call.end_with?("\n")
+  statements_before_call << "\n"
 end
-if ! statements_after_call.empty?
-  statements_after_call += "\n"
+if ! statements_after_call.empty? && ! statements_after_call.end_with?("\n")
+  statements_after_call << "\n"
 end
 statements_before_call.gsub!(/\n/, "\n    ")
 statements_after_call.gsub!(/\n/, "\n    ")
@@ -31,8 +33,13 @@ puts <<-END
 
 END
 
-if prologue_file
-  File.open(prologue_file) do |file|
+if ! statements_for_prologue.empty?
+  puts(statements_for_prologue)
+  puts()
+end
+
+if file_for_prologue
+  File.open(file_for_prologue) do |file|
     print(file.read)
   end
 end
