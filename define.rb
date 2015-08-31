@@ -7,6 +7,7 @@ statements_before_call = ""
 statements_after_call  = ""
 statements_for_prologue = ""
 file_for_prologue = nil
+exclude_macros = false
 exclude_funcs = []
 
 opt = OptionParser.new
@@ -16,6 +17,7 @@ opt.on("-b STATEMENTS_BEFORE_CALL")  {|x| statements_before_call  = x}
 opt.on("-a STATEMENTS_AFTER_CALL")   {|x| statements_after_call   = x}
 opt.on("-p STATEMENTS_FOR_PROLOGUE") {|x| statements_for_prologue = x}
 opt.on("-P FILE_FOR_PROLOGUE")       {|x| file_for_prologue       = x}
+opt.on("-m") {|x| exclude_macros = true}
 opt.on("-e EXCLUDE_FUNC1,EXCLUDE_FUNC2,...") {|x| exclude_funcs = x.split(",")}
 opt.parse!(ARGV)
 
@@ -27,6 +29,8 @@ if ! statements_after_call.empty? && ! statements_after_call.end_with?("\n")
 end
 statements_before_call.gsub!(/\n/, "\n    ")
 statements_after_call.gsub!(/\n/, "\n    ")
+
+macro_names = /^MPI_(?:Wtime|Wtick|Aint_add|Aint_diff|(?:Type|Group|Request|File|Win|Op|Info|Errhandler|Message)(?:f2c|c2f)|Status_(?:f2c|c2f|f082c|c2f08|f2f08|f082f))/
 
 puts <<-END
 #include <mpi.h>
@@ -69,6 +73,12 @@ ARGF.each do |line|
 	END
     end
 
+    if (exclude_macros && func_name =~ macro_names)
+      puts <<-END.sub(/^\t/, "")
+	#if ! defined(#{func_name}) && ! defined(P#{func_name})
+	END
+    end
+
     func_def = <<-END.gsub(/^\t/, "")
 	#{ret_type} #{func_name}(#{formal_params})
 	{
@@ -78,6 +88,12 @@ ARGF.each do |line|
 	}
 	END
     puts(func_def)
+
+    if (exclude_macros && func_name =~ macro_names)
+      puts <<-END.sub(/^\t/, "")
+	#endif
+	END
+    end
 
     if exclude_funcs.include?(func_name)
       puts <<-END.sub(/^\t/, "")
